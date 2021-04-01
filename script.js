@@ -8,6 +8,7 @@ const TEST_PASS_3 = "000000";
 //Test data
 
 const submitBtn = document.querySelector(".submit-btn");
+const form = document.querySelector(".registration__form");
 const BASE_URL = "http://test.kluatr.ru/api/user/";
 const urlLogin = "login";
 const urlData = "data";
@@ -18,6 +19,7 @@ const headers = {
 const sendRequest = (method, url, body) => {
   return fetch(url, {
     method: method,
+    credentials: "include",
     body: body ? JSON.stringify(body) : null,
     headers: headers,
   }).then((response) => {
@@ -30,6 +32,12 @@ const sendRequest = (method, url, body) => {
   });
 };
 
+const getPoints = () => {
+  sendRequest("GET", BASE_URL + urlData)
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
+};
+
 const authorization = () => {
   const body = {
     //Раскомментировать для кастомных логина и пароля
@@ -40,8 +48,14 @@ const authorization = () => {
   };
 
   sendRequest("POST", BASE_URL + urlLogin, body)
-    .then((data) => console.log(data))
+    .then((data) => {
+      console.log(data);
+      return getPoints();
+    })
     .catch((err) => console.log(err));
 };
 
-submitBtn.addEventListener("click", authorization);
+form.onsubmit = function (evt) {
+  evt.preventDefault();
+  authorization();
+};
